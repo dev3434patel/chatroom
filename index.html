@@ -92,20 +92,21 @@
         <div class="spinner"></div>
         <p>Redirecting to chat application...</p>
         
-        <a href="public/index.html" class="btn">Enter Chat Room</a>
+        <a href="public/demo.html" class="btn">View Demo</a>
+        <a href="public/index.html" class="btn">Full App (Requires Server)</a>
         <a href="https://github.com/dev3434patel/chatroom" class="btn">View on GitHub</a>
     </div>
 
     <script>
         // Auto-redirect after 3 seconds
         setTimeout(() => {
-            window.location.href = 'public/index.html';
+            window.location.href = 'public/demo.html';
         }, 3000);
         
         // Also redirect on click anywhere
         document.addEventListener('click', (e) => {
             if (e.target.tagName !== 'A') {
-                window.location.href = 'public/index.html';
+                window.location.href = 'public/demo.html';
             }
         });
     </script>

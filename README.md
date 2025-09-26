@@ -102,14 +102,45 @@ NODE_ENV=development
 
 ## 🚀 Deployment
 
-### Local Deployment
-The app runs on a single Node.js process serving both frontend and backend.
+### ⚠️ Important: GitHub Pages Limitation
+GitHub Pages only serves static files and **cannot run Node.js servers**. For the full chat functionality, you need to deploy to a platform that supports Node.js.
 
-### Cloud Deployment
-1. Upload to your preferred hosting service (Heroku, Railway, DigitalOcean, etc.)
-2. Ensure the `/uploads` directory has write permissions
-3. Set environment variables if needed
-4. The app will create necessary directories automatically
+### 🌐 Live Demo
+- **GitHub Pages Demo**: [View Static Demo](https://dev3434patel.github.io/chatroom/) (UI only)
+- **Full App**: Requires deployment to Node.js hosting platform
+
+### 🚀 Quick Deploy Options
+
+#### Railway (Recommended - Free Tier)
+```bash
+npm install -g @railway/cli
+railway login
+railway init
+railway up
+```
+
+#### Render (Free Tier)
+1. Connect GitHub repository
+2. Choose "Web Service"
+3. Build: `npm install`
+4. Start: `npm start`
+
+#### Other Platforms
+- **Heroku**: `heroku create && git push heroku main`
+- **DigitalOcean App Platform**: Connect repo, select Node.js
+- **Vercel**: `vercel` (with serverless functions)
+
+### 📖 Detailed Deployment Guide
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment instructions.
+
+### Local Development
+```bash
+git clone https://github.com/dev3434patel/chatroom.git
+cd chatroom
+npm install
+npm start
+# Open http://localhost:3000
+```
 
 ## 🛡 Security Features
 
