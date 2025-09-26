@@ -11,6 +11,12 @@ class ChatApp {
     }
 
     init() {
+        // Check if running on GitHub Pages (static hosting)
+        if (this.isGitHubPages()) {
+            this.showGitHubPagesMessage();
+            return;
+        }
+        
         this.socket = io();
         this.bindEvents();
         this.setupSocketListeners();
@@ -569,6 +575,91 @@ class ChatApp {
                 console.error('Error parsing session data:', e);
                 this.clearSessionData();
             }
+        }
+    }
+
+    // GitHub Pages detection and handling
+    isGitHubPages() {
+        return window.location.hostname.includes('github.io') || 
+               window.location.hostname.includes('github.com') ||
+               window.location.hostname === 'localhost' && !this.isLocalServerRunning();
+    }
+
+    isLocalServerRunning() {
+        // Try to detect if local server is running by checking for specific ports
+        return window.location.port === '3000' || window.location.port === '8080';
+    }
+
+    showGitHubPagesMessage() {
+        // Hide the landing page and show GitHub Pages message
+        const landingPage = document.getElementById('landing-page');
+        const chatInterface = document.getElementById('chat-interface');
+        
+        // Create GitHub Pages message overlay
+        const messageOverlay = document.createElement('div');
+        messageOverlay.className = 'fixed inset-0 bg-gray-900 bg-opacity-95 flex items-center justify-center p-4 z-50';
+        messageOverlay.innerHTML = `
+            <div class="bg-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">
+                <div class="w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+                    <img src="White logo.png" alt="SparowTech Logo" class="w-16 h-16 object-contain">
+                </div>
+                
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent mb-4">
+                    SparowTech Chat
+                </h1>
+                
+                <div class="mb-6 p-4 bg-yellow-600/20 border border-yellow-600 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-exclamation-triangle text-yellow-400 mr-2"></i>
+                        <h3 class="text-yellow-400 font-semibold">Server Required</h3>
+                    </div>
+                    <p class="text-yellow-200 text-sm">
+                        This chat application requires a Node.js server to function. GitHub Pages only serves static files.
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <a href="demo.html" class="block w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+                        <i class="fas fa-eye mr-2"></i>
+                        View Static Demo
+                    </a>
+                    
+                    <a href="https://github.com/dev3434patel/chatroom" class="block w-full py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-all duration-300">
+                        <i class="fab fa-github mr-2"></i>
+                        View on GitHub
+                    </a>
+                </div>
+
+                <div class="mt-6 p-4 bg-gray-700 rounded-lg text-left">
+                    <h4 class="text-white font-semibold mb-2">🚀 To Run the Full Chat App:</h4>
+                    <div class="text-sm text-gray-300 space-y-1">
+                        <p><strong>1. Clone the repository:</strong></p>
+                        <code class="block bg-gray-800 p-2 rounded text-xs break-all">git clone https://github.com/dev3434patel/chatroom.git</code>
+                        
+                        <p class="mt-2"><strong>2. Install dependencies:</strong></p>
+                        <code class="block bg-gray-800 p-2 rounded text-xs">npm install</code>
+                        
+                        <p class="mt-2"><strong>3. Start the server:</strong></p>
+                        <code class="block bg-gray-800 p-2 rounded text-xs">npm start</code>
+                        
+                        <p class="mt-2"><strong>4. Open:</strong> <span class="text-blue-400">http://localhost:3000</span></p>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-xs text-gray-400">
+                    <p>Or deploy to Railway, Render, Heroku, or DigitalOcean for a live version.</p>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(messageOverlay);
+        
+        // Hide the original landing page
+        if (landingPage) {
+            landingPage.style.display = 'none';
+        }
+        if (chatInterface) {
+            chatInterface.style.display = 'none';
         }
     }
 }
