@@ -24,6 +24,7 @@ fs.ensureDirSync(uploadsDir);
 let users = new Map();
 let messages = [];
 let typingUsers = new Set();
+let userSessions = new Map(); // Store session data
 
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
@@ -77,7 +78,10 @@ io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
 
   // Handle user joining
-  socket.on('join', (displayName) => {
+  socket.on('join', (data) => {
+    const displayName = typeof data === 'string' ? data : data.displayName;
+    const sessionId = data.sessionId;
+    
     if (users.size >= MAX_USERS) {
       socket.emit('room-full');
       return;
@@ -86,10 +90,15 @@ io.on('connection', (socket) => {
     const user = {
       id: socket.id,
       displayName: displayName.trim(),
-      joinedAt: new Date()
+      joinedAt: new Date(),
+      sessionId: sessionId
     };
 
     users.set(socket.id, user);
+    if (sessionId) {
+      userSessions.set(sessionId, { socketId: socket.id, displayName: displayName.trim() });
+    }
+    
     socket.emit('join-success', { user, messages: getRecentMessages() });
     
     // Broadcast user joined
@@ -97,6 +106,47 @@ io.on('connection', (socket) => {
     io.emit('users-update', Array.from(users.values()));
 
     console.log(`${displayName} joined the chat`);
+  });
+
+  // Handle user rejoin
+  socket.on('rejoin', (data) => {
+    const { sessionId, displayName } = data;
+    
+    // Check if session exists and room has space
+    if (userSessions.has(sessionId) && users.size < MAX_USERS) {
+      const sessionData = userSessions.get(sessionId);
+      
+      // Update the session with new socket ID
+      userSessions.set(sessionId, { socketId: socket.id, displayName: sessionData.displayName });
+      
+      const user = {
+        id: socket.id,
+        displayName: sessionData.displayName,
+        joinedAt: new Date(),
+        sessionId: sessionId
+      };
+
+      users.set(socket.id, user);
+      socket.emit('rejoin-success', { user, messages: getRecentMessages() });
+      
+      // Broadcast user rejoined
+      socket.broadcast.emit('user-joined', user);
+      io.emit('users-update', Array.from(users.values()));
+      
+      console.log(`${sessionData.displayName} rejoined the chat`);
+    } else if (users.size >= MAX_USERS) {
+      socket.emit('room-full');
+    } else {
+      socket.emit('rejoin-failed');
+    }
+  });
+
+  // Handle manual leave
+  socket.on('manual-leave', () => {
+    const user = users.get(socket.id);
+    if (user && user.sessionId) {
+      userSessions.delete(user.sessionId);
+    }
   });
 
   // Handle new message
@@ -153,14 +203,16 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     const user = users.get(socket.id);
     if (user) {
+      // Only remove from active users, keep session data for reconnection
       users.delete(socket.id);
       typingUsers.delete(user.displayName);
       
-      socket.broadcast.emit('user-left', user);
+      // Don't broadcast user-left for disconnections, only for manual leaves
+      // The user can rejoin with the same session
       io.emit('users-update', Array.from(users.values()));
       io.emit('typing-update', Array.from(typingUsers));
       
-      console.log(`${user.displayName} left the chat`);
+      console.log(`${user.displayName} disconnected (can rejoin)`);
     }
   });
 });

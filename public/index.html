@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anonymous Chat Room</title>
+    <link rel="icon" type="image/png" href="white icon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -14,10 +15,10 @@
     <div id="landing-page" class="min-h-screen flex items-center justify-center p-4">
         <div class="bg-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300 hover:scale-105">
             <div class="text-center mb-8">
-                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <i class="fas fa-comments text-3xl text-white"></i>
+                <div class="w-64 h-24 mx-auto mb-8 flex items-center justify-center">
+                    <img src="White logo.png" alt="SparowTech Logo" class="w-56 h-56 object-contain">
                 </div>
-                <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+                <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
                     Anonymous Chat
                 </h1>
                 <p class="text-gray-400 mt-2">Join a private room for up to 4 users</p>
@@ -40,7 +41,7 @@
                 
                 <button 
                     type="submit"
-                    class="w-full py-3 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+                    class="w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800"
                 >
                     Join Chat Room
                     <i class="fas fa-arrow-right ml-2"></i>
@@ -64,9 +65,9 @@
         <!-- Sidebar -->
         <div id="sidebar" class="bg-gray-800 lg:w-80 lg:min-h-screen border-r border-gray-700 flex flex-col">
             <div class="p-6 border-b border-gray-700">
-                <h2 class="text-xl font-bold text-blue-400 mb-2">
+                <h2 class="text-xl font-bold text-blue-500 mb-2">
                     <i class="fas fa-comments mr-2"></i>
-                    Chat Room
+                    SparowTech Chat Room
                 </h2>
                 <p class="text-gray-400 text-sm">Anonymous • 7-day retention</p>
             </div>
@@ -93,7 +94,7 @@
         <div class="flex-1 flex flex-col">
             <!-- Chat Header (Mobile) -->
             <div class="lg:hidden bg-gray-800 p-4 border-b border-gray-700 flex items-center justify-between">
-                <h1 class="text-lg font-bold text-blue-400">Chat Room</h1>
+                <h1 class="text-lg font-bold text-blue-500">Chat Room</h1>
                 <button id="toggle-sidebar" class="text-gray-400 hover:text-white transition-colors duration-300">
                     <i class="fas fa-users text-xl"></i>
                 </button>
@@ -142,7 +143,7 @@
                     
                     <div class="flex space-x-2">
                         <input type="file" id="file-input" class="hidden" accept="*/*">
-                        <button id="file-button" class="p-3 bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors duration-300 tooltip" title="Upload file (max 100MB)">
+                        <button id="file-button" class="p-3 bg-cyan-600 hover:bg-cyan-700 rounded-lg transition-colors duration-300 tooltip" title="Upload file (max 100MB)">
                             <i class="fas fa-paperclip text-white"></i>
                         </button>
                     </div>

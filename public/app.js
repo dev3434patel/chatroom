@@ -5,6 +5,7 @@ class ChatApp {
         this.typingTimeout = null;
         this.isAtBottom = true;
         this.unreadMessages = 0;
+        this.sessionId = this.getOrCreateSessionId();
         
         this.init();
     }
@@ -14,6 +15,7 @@ class ChatApp {
         this.bindEvents();
         this.setupSocketListeners();
         this.setupAutoResize();
+        this.checkExistingSession();
     }
 
     bindEvents() {
@@ -93,6 +95,17 @@ class ChatApp {
             this.loadMessages(data.messages);
         });
 
+        this.socket.on('rejoin-success', (data) => {
+            this.currentUser = data.user;
+            this.showChatInterface();
+            this.loadMessages(data.messages);
+        });
+
+        this.socket.on('rejoin-failed', () => {
+            this.clearSessionData();
+            // Show landing page for new join
+        });
+
         this.socket.on('room-full', () => {
             this.showError('Room is full (4/4). Please try again later.');
         });
@@ -143,7 +156,9 @@ class ChatApp {
             return;
         }
 
-        this.socket.emit('join', displayName);
+        // Store session data
+        this.storeSessionData(displayName);
+        this.socket.emit('join', { displayName, sessionId: this.sessionId });
     }
 
     showChatInterface() {
@@ -426,7 +441,7 @@ class ChatApp {
             const displayName = isCurrentUser ? `${user.displayName} (You)` : user.displayName;
 
             userEl.innerHTML = `
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center text-white font-semibold text-sm user-online">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white font-semibold text-sm user-online">
                     ${user.displayName.charAt(0).toUpperCase()}
                 </div>
                 <span class="text-white text-sm font-medium">${this.escapeHtml(displayName)}</span>
@@ -484,6 +499,8 @@ class ChatApp {
 
     leaveChat() {
         if (confirm('Are you sure you want to leave the chat?')) {
+            this.clearSessionData();
+            this.socket.emit('manual-leave');
             this.socket.disconnect();
             location.reload();
         }
@@ -515,6 +532,44 @@ class ChatApp {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    // Session management methods
+    getOrCreateSessionId() {
+        let sessionId = sessionStorage.getItem('chatSessionId');
+        if (!sessionId) {
+            sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            sessionStorage.setItem('chatSessionId', sessionId);
+        }
+        return sessionId;
+    }
+
+    storeSessionData(displayName) {
+        const sessionData = {
+            displayName: displayName,
+            sessionId: this.sessionId,
+            joinedAt: new Date().toISOString()
+        };
+        sessionStorage.setItem('chatSessionData', JSON.stringify(sessionData));
+    }
+
+    clearSessionData() {
+        sessionStorage.removeItem('chatSessionData');
+        sessionStorage.removeItem('chatSessionId');
+    }
+
+    checkExistingSession() {
+        const sessionData = sessionStorage.getItem('chatSessionData');
+        if (sessionData) {
+            try {
+                const data = JSON.parse(sessionData);
+                // Auto-rejoin with stored session data
+                this.socket.emit('rejoin', { sessionId: data.sessionId, displayName: data.displayName });
+            } catch (e) {
+                console.error('Error parsing session data:', e);
+                this.clearSessionData();
+            }
+        }
     }
 }
 
