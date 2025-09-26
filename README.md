@@ -1,6 +1,8 @@
-# Anonymous 1-Room Chat App (Max 4 Users)
+# SparowTech Chat - Anonymous Chat Application
 
-A lightweight, real-time anonymous chat application supporting up to 4 users simultaneously with file sharing capabilities and automatic data cleanup.
+🚀 **Live Demo**: [Try SparowTech Chat Now](https://dev3434patel.github.io/chatroom/)
+
+A lightweight, real-time anonymous chat application supporting up to 4 users simultaneously with file sharing capabilities, session persistence, and automatic data cleanup.
 
 ## 🚀 Features
 
@@ -10,8 +12,8 @@ A lightweight, real-time anonymous chat application supporting up to 4 users sim
   - Support for all file types (AI, PSD, ZIP, PDF, images, documents, etc.)
   - Image preview with lightbox view
   - Download links for documents
-- **User Management**: Maximum 4 users per room
-- **Typing Indicators**: See when others are typing
+- **Session Persistence**: Stay connected even after page refresh - only manual leave removes you from chat
+- **Smart Reconnection**: Automatic rejoin with stored session data
 - **Auto-cleanup**: Messages and files automatically deleted after 7 days
 - **Responsive Design**: Works on desktop, tablet, and mobile devices
 - **Modern UI**: Dark theme with smooth animations and transitions
@@ -88,7 +90,8 @@ NODE_ENV=development
 2. **Send Messages**: Type in the input field and press Enter or click send
 3. **Share Files**: Click the paperclip icon to upload files (max 100MB)
 4. **View Users**: See online users in the sidebar (desktop) or toggle on mobile
-5. **Leave Chat**: Click "Leave Chat" or simply close the browser
+5. **Stay Connected**: Refresh the page or close/reopen browser - you'll automatically rejoin!
+6. **Leave Chat**: Only clicking "Leave Chat" button will permanently remove you from the chat
 
 ## 🔒 Privacy & Data
 
